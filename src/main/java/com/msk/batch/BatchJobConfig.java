@@ -26,11 +26,12 @@ public class BatchJobConfig {
 
     @Bean
     public Step processStep(JobRepository jobRepository, PlatformTransactionManager transactionManager,
-                            MultiResourceItemReader multiResourceItemReader, JdbcBatchItemWriter<FinData> finDataWriter) {
+                            MultiResourceItemReader<FinData> multiResourceItemReader, JdbcBatchItemWriter<FinData> finDataWriter) {
         return new StepBuilder("processStep", jobRepository)
-                .<FinData, FinData>chunk(1000, transactionManager)
+                .<FinData, FinData>chunk(1000)
                 .reader(multiResourceItemReader)
                 .writer(finDataWriter)
+                .transactionManager(transactionManager)
                 .build();
     }
 

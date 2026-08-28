@@ -3,9 +3,6 @@ package com.msk.batch.reader;
 import com.msk.batch.model.FinData;
 
 import org.springframework.batch.core.configuration.annotation.StepScope;
-import org.springframework.batch.core.job.parameters.JobParameters;
-import org.springframework.batch.core.job.parameters.JobParametersBuilder;
-import org.springframework.batch.infrastructure.item.ExecutionContext;
 import org.springframework.batch.infrastructure.item.file.FlatFileItemReader;
 import org.springframework.batch.infrastructure.item.file.MultiResourceItemReader;
 import org.springframework.batch.infrastructure.item.file.builder.FlatFileItemReaderBuilder;
