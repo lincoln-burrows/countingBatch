@@ -2,6 +2,8 @@ package com.msk.batch.reader;
 
 import com.msk.batch.model.FinData;
 
+import jakarta.annotation.Nonnull;
+import lombok.NonNull;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.parameters.JobParameters;
 import org.springframework.batch.core.job.parameters.JobParametersBuilder;
@@ -29,9 +31,12 @@ import java.util.List;
 @Configuration
 public class FinDataReader {
 
+    private static final DateTimeFormatter titleFormatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss");
+
     @Bean
     @StepScope
     public MultiResourceItemReader<FinData> multiResourceReader(FlatFileItemReader<FinData> flatFileItemReader) throws Exception{
+        // todo: 노란줄 제거, 하드코딩 주소 -> yml 으로
         Path dirPath = Paths.get("data/sensors/sensor1234");
 
         Resource[] resources = findRecentSensorFiles(dirPath);
@@ -101,6 +106,8 @@ public class FinDataReader {
         //파일명 - 1234_20260821T090110.csv
         try (DirectoryStream<Path> directoryStream =
                      Files.newDirectoryStream(dirPath, "*.csv")) {
+            // todo : stream 방식으로 바꿀 것  - 전처리 기능과 try 안에 // try 문 안에 있는걸 별도 메소드로 뺄 것. 가독성 안좋음. for 룹 안에는 4~5줄.
+
             for (Path path : directoryStream) {
 
                 String fileName = path.getFileName().toString();
@@ -115,20 +122,22 @@ public class FinDataReader {
                 String timestamp = fileName.substring(underscoreIndex + 1, dotIndex);
 
                 try {
-                    LocalDateTime fileTime = LocalDateTime.parse(timestamp, DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss"));
+                    // todo : 메소드로 뺄 것
+                    LocalDateTime fileTime = LocalDateTime.parse(timestamp, titleFormatter);
 
                     LocalDateTime now = LocalDateTime.now();
                     LocalDateTime threeMinutesAgo = now.minusMinutes(3);
 // 테스트 환경에서 주석처리
-//                    if (!fileTime.isBefore(threeMinutesAgo)
-//                            && !fileTime.isAfter(now)) {
-//
-//                        files.add(new FileSystemResource(path.toFile()));
-//                    }
-                    files.add(new FileSystemResource(path.toFile()));
+                    if (!fileTime.isBefore(threeMinutesAgo)
+                            && !fileTime.isAfter(now)) {
+
+                        files.add(new FileSystemResource(path.toFile()));
+                    }
+//                    files.add(new FileSystemResource(path.toFile()));
 
                 } catch (DateTimeParseException e) {
-                    // 파일명 형식이 다른 파일은 무시
+                    // 파일명 형식이 다른 파일은 무시 -> 로그로 남길 것
+
                 }
             }
         }
