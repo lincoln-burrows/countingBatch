@@ -1,5 +1,6 @@
 package com.msk.batch.model;
 
+
 public record FinData (
     String sensorId,
     int regionId,

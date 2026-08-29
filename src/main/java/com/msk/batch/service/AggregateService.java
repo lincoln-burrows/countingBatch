@@ -27,8 +27,8 @@ public class AggregateService {
     }
 
     private void saveAnalytics(List<Track> tracks) {
-        if(tracks.size() > 0){
-            Analytics analytics = new Analytics(tracks.get(0).getSensorId(), LocalDateTime.now(), tracks.size());
+        if(!tracks.isEmpty()){
+            Analytics analytics = new Analytics(tracks.getFirst().getSensorId(), LocalDateTime.now(), tracks.size());
 
             String sql = """
                 INSERT INTO analytics (
