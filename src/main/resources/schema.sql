@@ -1,24 +1,24 @@
-CREATE TABLE FIN_DATA (
-    SENSOR_ID             VARCHAR2(100)  NOT NULL,
-    REGION_ID             NUMBER(10)     NOT NULL,
-    VISITOR_ID            VARCHAR2(100)  NOT NULL,
-    DEVICE_ID             VARCHAR2(100),
-    DEVICE_TYPE           VARCHAR2(50),
-    POPULATION_TYPE       NUMBER(10),
-    GLOBAL_ID             NUMBER(10),
-    FIRST_TIME_SEEN       NUMBER(19)     NOT NULL,
-    LAST_TIME_SEEN        NUMBER(19),
-    RSSI                   NUMBER(10),
-    N_EVENTS               NUMBER(10),
-    MANUFACTURER           VARCHAR2(100),
-    MANUFACTURER_ROUTER    NUMBER(1),
-    MANUFACTURER_GLOBAL    NUMBER(1),
-    EXCLUDED               NUMBER(1),
-    SSID                   VARCHAR2(255),
-    FRAME_CONTROL_HEX      VARCHAR2(50),
-    LENGTH                 NUMBER(10),
+CREATE TABLE IF NOT EXISTS fin_data (
+    SENSOR_ID             VARCHAR(100)  NOT NULL,
+    REGION_ID             INT           NOT NULL,
+    VISITOR_ID            VARCHAR(100)  NOT NULL,
+    DEVICE_ID             VARCHAR(100),
+    DEVICE_TYPE           VARCHAR(50),
+    POPULATION_TYPE       INT,
+    GLOBAL_ID             INT,
+    FIRST_TIME_SEEN       BIGINT        NOT NULL,
+    LAST_TIME_SEEN        BIGINT,
+    RSSI                   INT,
+    N_EVENTS               INT,
+    MANUFACTURER           VARCHAR(100),
+    MANUFACTURER_ROUTER    TINYINT,
+    MANUFACTURER_GLOBAL    TINYINT,
+    EXCLUDED               TINYINT,
+    SSID                   VARCHAR(255),
+    FRAME_CONTROL_HEX      VARCHAR(50),
+    LENGTH                 INT,
 
-    CONSTRAINT PK_FIN_DATA
+    CONSTRAINT pk_fin_data
         PRIMARY KEY (
             SENSOR_ID,
             REGION_ID,
@@ -27,8 +27,7 @@ CREATE TABLE FIN_DATA (
         )
 );
 
-
-CREATE TABLE analytics (
+CREATE TABLE IF NOT EXISTS analytics (
     sensor_id VARCHAR(255) NOT NULL,
     timestamp TIMESTAMP NOT NULL,
     visitors BIGINT NOT NULL,

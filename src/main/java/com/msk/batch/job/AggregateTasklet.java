@@ -23,7 +23,7 @@ public class AggregateTasklet implements Tasklet {
     private final AggregateService aggregateService;
 
     @Override
-    public @Nullable RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+    public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
 
         aggregateService.aggregate();
 

@@ -17,7 +17,7 @@ public class FinDataWriterConfig {
         return new JdbcBatchItemWriterBuilder<FinData>()
                 .dataSource(dataSource)
                 .sql("""
-                    INSERT INTO FIN_DATA (
+                    INSERT INTO fin_data (
                         SENSOR_ID,
                         REGION_ID,
                         VISITOR_ID,

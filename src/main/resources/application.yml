@@ -1,16 +1,24 @@
 spring:
   datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:testdb
-    username: sa
-    password:
+        url: jdbc:mysql://localhost:3306/batchdb?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+        username: batch
+        password: batch1234
+        driver-class-name: com.mysql.cj.jdbc.Driver
+#    driver-class-name: org.h2.Driver
+#    url: jdbc:h2:mem:testdb
+#    username: sa
+#    password:
+#
+#  h2:
+#    console:
+#      enabled: true
+#      settings:
+#        web-allow-others: true
+#      path: /h2-console
 
-  h2:
-    console:
-      enabled: true
-      settings:
-        web-allow-others: true
-      path: /h2-console
+  sql:
+    init:
+      mode: always
 
   batch:
     job:

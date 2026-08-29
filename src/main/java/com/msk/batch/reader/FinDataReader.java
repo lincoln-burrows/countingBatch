@@ -125,12 +125,12 @@ public class FinDataReader {
                     LocalDateTime now = LocalDateTime.now();
                     LocalDateTime threeMinutesAgo = now.minusMinutes(3);
 // 테스트 환경에서 주석처리
-                    if (!fileTime.isBefore(threeMinutesAgo)
-                            && !fileTime.isAfter(now)) {
-
-                        files.add(new FileSystemResource(path.toFile()));
-                    }
-//                    files.add(new FileSystemResource(path.toFile()));
+//                    if (!fileTime.isBefore(threeMinutesAgo)
+//                            && !fileTime.isAfter(now)) {
+//
+//                        files.add(new FileSystemResource(path.toFile()));
+//                    }
+                    files.add(new FileSystemResource(path.toFile()));
 
                 } catch (DateTimeParseException e) {
                     // 파일명 형식이 다른 파일은 무시 -> 로그로 남길 것
