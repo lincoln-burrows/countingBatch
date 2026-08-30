@@ -1,6 +1,7 @@
 package com.msk.batch.reader;
 
 import com.msk.batch.model.FinData;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.infrastructure.item.file.FlatFileItemReader;
 import org.springframework.batch.infrastructure.item.file.MultiResourceItemReader;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
+@Slf4j
 public class FinDataReader {
 
     private static final DateTimeFormatter titleFormatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss");
@@ -100,41 +102,48 @@ public class FinDataReader {
         //파일명 - 1234_20260821T090110.csv
         try (DirectoryStream<Path> directoryStream =
                      Files.newDirectoryStream(dirPath, "*.csv")) {
+
             // todo : stream 방식으로 바꿀 것  - 전처리 기능과 try 안에 // try 문 안에 있는걸 별도 메소드로 뺄 것. 가독성 안좋음. for 룹 안에는 4~5줄.
+            directoryStream.forEach(path -> include3minFile(path, files));
 
-            for (Path path : directoryStream) {
-
-                String fileName = path.getFileName().toString();
-
-                int underscoreIndex = fileName.indexOf("_");
-                int dotIndex = fileName.lastIndexOf(".");
-
-                if (underscoreIndex == -1 || dotIndex == -1) {
-                    continue;
-                }
-
-                String timestamp = fileName.substring(underscoreIndex + 1, dotIndex);
-
-                try {
-                    // todo : 메소드로 뺄 것
-                    LocalDateTime fileTime = LocalDateTime.parse(timestamp, titleFormatter);
-
-                    LocalDateTime now = LocalDateTime.now();
-                    LocalDateTime threeMinutesAgo = now.minusMinutes(3);
-// 테스트 환경에서 주석처리
-                    if (!fileTime.isBefore(threeMinutesAgo)
-                            && !fileTime.isAfter(now)) {
-
-                        files.add(new FileSystemResource(path.toFile()));
-                    }
-//                    files.add(new FileSystemResource(path.toFile()));
-
-                } catch (DateTimeParseException e) {
-                    // 파일명 형식이 다른 파일은 무시 -> 로그로 남길 것
-
-                }
-            }
         }
         return files.toArray(new Resource[0]);
     }
+
+
+    private void include3minFile(Path path, List<Resource> files) {
+
+        String fileName = path.getFileName().toString();
+        int underscoreIndex = fileName.indexOf("_");
+        int dotIndex = fileName.lastIndexOf(".");
+
+        if(validTitleChk(underscoreIndex, dotIndex) && validTimechk(fileName, underscoreIndex, dotIndex)){
+            files.add(new FileSystemResource(path.toFile()));
+        }
+    }
+
+    private boolean validTimechk(String fileName, int underscoreIndex, int dotIndex) {
+
+        String timestamp = fileName.substring(underscoreIndex + 1, dotIndex);
+
+        try {
+            // todo : 메소드로 뺄 것 - 완료
+            LocalDateTime fileTime = LocalDateTime.parse(timestamp, titleFormatter);
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime threeMinutesAgo = now.minusMinutes(3);
+            // 테스트 환경에서 주석처리
+            return !fileTime.isBefore(threeMinutesAgo)
+                    && !fileTime.isAfter(now);
+        } catch (DateTimeParseException e) {
+            // 파일명 형식이 다른 파일은 무시 -> 로그로 남길 것
+            log.error(e.getMessage());
+            return false;
+        }
+    }
+
+    private boolean validTitleChk(int underscoreIndex, int dotIndex) {
+        return underscoreIndex != -1 && dotIndex != -1;
+    }
+
+
 }
