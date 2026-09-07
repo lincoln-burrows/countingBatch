@@ -1,6 +1,7 @@
 package com.msk.batch.writer;
 
 import com.msk.batch.model.FinData;
+import com.msk.batch.repository.FinDataRepository;
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.batch.infrastructure.item.ItemWriter;
 import org.springframework.batch.infrastructure.item.database.JdbcBatchItemWriter;
@@ -17,6 +18,15 @@ import java.util.List;
 
 @Configuration
 public class FinDataWriterConfig {
+
+    @Bean
+    public ItemWriter<FinData> finDataJpaBulkWriter(
+            FinDataRepository finDataRepository) {
+
+        return chunk -> {
+            finDataRepository.saveAll(chunk.getItems());
+        };
+    }
 
     @Bean
     public JpaItemWriter<FinData> finDataJpaWriter(EntityManagerFactory entityManagerFactory) {

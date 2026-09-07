@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/batchdb?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    url: jdbc:mysql://localhost:3306/batchdb?serverTimezone=Asia/Seoul&characterEncoding=UTF-8&rewriteBatchedStatements=true
     username: batch
     password: batch1234
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -17,8 +17,14 @@ spring:
       path: /h2-console
 
   jpa:
-    hibernate:
-      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        ddl-auto: none
+#        format_sql: true
+        jdbc:
+          batch_size: 100000
+        order_inserts: true
 
   sql:
     init:
@@ -31,5 +37,7 @@ spring:
       initialize-schema: always
 
 logging:
-  file:
-    name: logs/batch.log
+#  level:
+#    org.hibernate.orm.jdbc.batch: TRACE
+#  file:
+#    name: logs/batch.log
