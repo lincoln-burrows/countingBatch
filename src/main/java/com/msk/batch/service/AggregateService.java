@@ -2,6 +2,7 @@ package com.msk.batch.service;
 
 import com.msk.batch.model.Analytics;
 import com.msk.batch.model.FinData;
+import com.msk.batch.model.FinData;
 import com.msk.batch.model.Track;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -55,16 +56,16 @@ public class AggregateService {
         for (FinData newData :  finDataList) {
 
             // 멀리 있는 이상신호 제거
-            if(newData.rssi() < -80 ) continue;
+            if(newData.getRssi() < -80 ) continue;
 
-            if (visitors.containsKey(newData.visitorId())){
-                Track data = visitors.get(newData.visitorId());
-                data.setFirstTimeSeen(Math.min(data.getFirstTimeSeen(), newData.firstTimeSeen()));
-                data.setFirstTimeSeen(Math.max(data.getLastTimeSeen(), newData.lastTimeSeen()));
+            if (visitors.containsKey(newData.getVisitorId())){
+                Track data = visitors.get(newData.getVisitorId());
+                data.setFirstTimeSeen(Math.min(data.getFirstTimeSeen(), newData.getFirstTimeSeen()));
+                data.setFirstTimeSeen(Math.max(data.getLastTimeSeen(), newData.getLastTimeSeen()));
 
             } else {
-                visitors.put(newData.visitorId(),
-                        new Track(newData.sensorId(), newData.regionId(), newData.visitorId(), newData.deviceId(), newData.deviceType(), newData.firstTimeSeen(), newData.lastTimeSeen()));
+                visitors.put(newData.getVisitorId(),
+                        new Track(newData.getSensorId(), newData.getRegionId(), newData.getVisitorId(), newData.getDeviceId(), newData.getDeviceType(), newData.getFirstTimeSeen(), newData.getLastTimeSeen()));
             }
         }
 

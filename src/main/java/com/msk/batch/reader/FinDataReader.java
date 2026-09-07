@@ -1,6 +1,7 @@
 package com.msk.batch.reader;
 
 import com.msk.batch.model.FinData;
+import com.msk.batch.model.FinData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.infrastructure.item.file.FlatFileItemReader;
@@ -33,7 +34,7 @@ public class FinDataReader {
     @StepScope
     public MultiResourceItemReader<FinData> multiResourceReader(FlatFileItemReader<FinData> flatFileItemReader) throws Exception{
         // todo: 노란줄 제거, 하드코딩 주소 -> yml 으로
-        Path dirPath = Paths.get("data/sensors/sensor1234");
+        Path dirPath = Paths.get("data/sensors/sensor1001");
 
         Resource[] resources = findRecentSensorFiles(dirPath);
 

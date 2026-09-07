@@ -1,6 +1,7 @@
 package com.msk.batch.job;
 
 import com.msk.batch.service.AggregateService;
+import jakarta.annotation.Nonnull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.StepContribution;
@@ -16,7 +17,7 @@ public class AggregateTasklet implements Tasklet {
     private final AggregateService aggregateService;
 
     @Override
-    public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {
+    public RepeatStatus execute(@Nonnull StepContribution contribution, @Nonnull ChunkContext chunkContext) {
 
         aggregateService.aggregate();
 

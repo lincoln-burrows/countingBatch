@@ -2,12 +2,15 @@ package com.msk.batch;
 
 import com.msk.batch.job.AggregateTasklet;
 import com.msk.batch.model.FinData;
+import com.msk.batch.model.FinData;
+import com.msk.batch.reader.TimedFinDataReader;
 import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.job.parameters.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.Step;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.infrastructure.item.ItemWriter;
 import org.springframework.batch.infrastructure.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.infrastructure.item.file.MultiResourceItemReader;
 import org.springframework.context.annotation.Bean;
@@ -25,17 +28,43 @@ public class BatchJobConfig {
                 .next(aggregateStep)
                 .build();
     }
+// 단건 insert 방식
+//    @Bean
+//    public Step processStep(JobRepository jobRepository, PlatformTransactionManager transactionManager,
+//                            MultiResourceItemReader<FinData> multiResourceItemReader, JdbcBatchItemWriter<FinData> finDataWriter) {
+//        return new StepBuilder("processStep", jobRepository)
+//                .<FinData, FinData>chunk(1000)
+//                .reader(multiResourceItemReader)
+//                .writer(finDataWriter)
+//                .transactionManager(transactionManager)
+//                .build();
+//    }
 
+
+    // bulk insert
     @Bean
     public Step processStep(JobRepository jobRepository, PlatformTransactionManager transactionManager,
-                            MultiResourceItemReader<FinData> multiResourceItemReader, JdbcBatchItemWriter<FinData> finDataWriter) {
+                            MultiResourceItemReader<FinData> multiResourceItemReader, ItemWriter<FinData> finDataBulkWriter) {
         return new StepBuilder("processStep", jobRepository)
-                .<FinData, FinData>chunk(1000)
+                .<FinData, FinData>chunk(100_000)
                 .reader(multiResourceItemReader)
-                .writer(finDataWriter)
+                .writer(finDataBulkWriter)
                 .transactionManager(transactionManager)
                 .build();
     }
+
+// 파일 read 시간 측정용
+//    @Bean
+//    public Step processStep(JobRepository jobRepository, PlatformTransactionManager transactionManager,
+//                            TimedFinDataReader timedFinDataReader, ItemWriter<FinData> finDataBulkWriter) {
+//        return new StepBuilder("processStep", jobRepository)
+//                .<FinData, FinData>chunk(100_000)
+//                .reader(timedFinDataReader)
+//                .writer(finDataBulkWriter)
+//                .transactionManager(transactionManager)
+//                .build();
+//    }
+
 
     @Bean
     public Step aggregateStep(JobRepository jobRepository, PlatformTransactionManager transactionManager,
