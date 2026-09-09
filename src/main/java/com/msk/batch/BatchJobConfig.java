@@ -58,7 +58,7 @@ public class BatchJobConfig {
     public Step processStep(JobRepository jobRepository, PlatformTransactionManager transactionManager,
                             MultiResourceItemReader<FinData> multiResourceItemReader, JpaItemWriter<FinData> finDataJpaWriter) {
         return new StepBuilder("processStep", jobRepository)
-                .<FinData, FinData>chunk(100_000)
+                .<FinData, FinData>chunk(1000)
                 .reader(multiResourceItemReader)
                 .writer(finDataJpaWriter)
                 .transactionManager(transactionManager)

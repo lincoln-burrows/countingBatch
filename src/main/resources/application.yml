@@ -17,13 +17,13 @@ spring:
       path: /h2-console
 
   jpa:
-    show-sql: true
+    # show-sql: true
     properties:
       hibernate:
         ddl-auto: none
 #        format_sql: true
         jdbc:
-          batch_size: 100000
+          batch_size: 1000
         order_inserts: true
 
   sql:
