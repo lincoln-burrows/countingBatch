@@ -41,17 +41,7 @@ public class BatchJobConfig {
                 .build();
     }
 
-    @Bean
-    public Step partitionStep(
-            JobRepository jobRepository,
-            FilePartitioner filePartitioner,
-            PartitionHandler partitionHandler) {
 
-        return new StepBuilder("partitionStep", jobRepository)
-                .partitioner("workerStep", filePartitioner)
-                .partitionHandler(partitionHandler)
-                .build();
-    }
 
     // 단건 insert 방식
 //    @Bean
@@ -78,16 +68,16 @@ public class BatchJobConfig {
 //    }
 
     //jpa select 문 방지 -> 원리 파악
-    @Bean
-    public Step processStep(JobRepository jobRepository, PlatformTransactionManager transactionManager,
-                            MultiResourceItemReader<FinData> multiResourceItemReader, JpaItemWriter<FinData> finDataJpaWriter) {
-        return new StepBuilder("processStep", jobRepository)
-                .<FinData, FinData>chunk(100_000)
-                .reader(multiResourceItemReader)
-                .writer(finDataJpaWriter)
-                .transactionManager(transactionManager)
-                .build();
-    }
+//    @Bean
+//    public Step processStep(JobRepository jobRepository, PlatformTransactionManager transactionManager,
+//                            MultiResourceItemReader<FinData> multiResourceItemReader, JpaItemWriter<FinData> finDataJpaWriter) {
+//        return new StepBuilder("processStep", jobRepository)
+//                .<FinData, FinData>chunk(100_000)
+//                .reader(multiResourceItemReader)
+//                .writer(finDataJpaWriter)
+//                .transactionManager(transactionManager)
+//                .build();
+//    }
 
     // jdbc bulk insert
 //    @Bean
