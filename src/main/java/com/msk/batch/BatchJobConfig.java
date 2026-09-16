@@ -3,10 +3,12 @@ package com.msk.batch;
 import com.msk.batch.job.AggregateTasklet;
 import com.msk.batch.model.FinData;
 import com.msk.batch.model.FinData;
+import com.msk.batch.partition.FilePartitioner;
 import com.msk.batch.reader.TimedFinDataReader;
 import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.job.parameters.RunIdIncrementer;
+import org.springframework.batch.core.partition.PartitionHandler;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.Step;
 import org.springframework.batch.core.step.builder.StepBuilder;
@@ -21,15 +23,37 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Configuration
 public class BatchJobConfig {
 
+//    @Bean
+//    public Job getAnalysis(JobRepository jobRepository, Step processStep, Step aggregateStep) {
+//        return new JobBuilder("finToEvent", jobRepository)
+//                .incrementer(new RunIdIncrementer())
+//                .start(processStep)
+//                .next(aggregateStep)
+//                .build();
+//    }
+
     @Bean
-    public Job getAnalysis(JobRepository jobRepository, Step processStep, Step aggregateStep) {
+    public Job getAnalysis(JobRepository jobRepository, Step partitionStep, Step aggregateStep) {
         return new JobBuilder("finToEvent", jobRepository)
                 .incrementer(new RunIdIncrementer())
-                .start(processStep)
+                .start(partitionStep)
                 .next(aggregateStep)
                 .build();
     }
-// 단건 insert 방식
+
+    @Bean
+    public Step partitionStep(
+            JobRepository jobRepository,
+            FilePartitioner filePartitioner,
+            PartitionHandler partitionHandler) {
+
+        return new StepBuilder("partitionStep", jobRepository)
+                .partitioner("workerStep", filePartitioner)
+                .partitionHandler(partitionHandler)
+                .build();
+    }
+
+    // 단건 insert 방식
 //    @Bean
 //    public Step processStep(JobRepository jobRepository, PlatformTransactionManager transactionManager,
 //                            MultiResourceItemReader<FinData> multiResourceItemReader, JdbcBatchItemWriter<FinData> finDataWriter) {
