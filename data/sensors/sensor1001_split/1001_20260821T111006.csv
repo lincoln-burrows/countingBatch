@@ -1,0 +1,2 @@
+sensorId,regionId,visitorId,deviceId,deviceType,populationType,globalId,firstTimeSeen,lastTimeSeen,rssi,nEvents,manufacturer,manufacturerRouter,manufacturerGlobal,excluded,ssid,frameControlHex,length
+SENSOR-1001,1,visitor-common-083615,02:00:00:44:AA:20,MOBILE,2,4500000,1787278200000,1787278200000,-41,10,Apple,True,False,False,Cafe_Free_WiFi,0x521A,75
