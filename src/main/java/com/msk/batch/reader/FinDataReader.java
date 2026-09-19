@@ -8,6 +8,7 @@ import org.springframework.batch.infrastructure.item.file.FlatFileItemReader;
 import org.springframework.batch.infrastructure.item.file.MultiResourceItemReader;
 import org.springframework.batch.infrastructure.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.infrastructure.item.file.builder.MultiResourceItemReaderBuilder;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
@@ -32,7 +33,7 @@ public class FinDataReader {
 
     @Bean
     @StepScope
-    public MultiResourceItemReader<FinData> multiResourceReader(FlatFileItemReader<FinData> flatFileItemReader) throws Exception{
+    public MultiResourceItemReader<FinData> multiResourceReader(@Qualifier("finDataItemReader") FlatFileItemReader<FinData> flatFileItemReader) throws Exception{
         // todo: 노란줄 제거, 하드코딩 주소 -> yml 으로
         Path dirPath = Paths.get("data/sensors/sensor1001");
 
@@ -46,10 +47,11 @@ public class FinDataReader {
     }
 
     @Bean
+    @Qualifier
     public FlatFileItemReader<FinData> finDataItemReader() {
 
         return new FlatFileItemReaderBuilder<FinData>()
-                .name("flatfileReader")
+                .name("flatfileItemReader")
                 .linesToSkip(1)
                 .delimited()
                 .delimiter(",")

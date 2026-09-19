@@ -1,7 +1,7 @@
 package com.msk.batch.writer;
 
 import com.msk.batch.model.FinData;
-import com.msk.batch.repository.FinDataRepository;
+import com.msk.batch.repository.FinDataJpaRepository;
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.batch.infrastructure.item.ItemWriter;
 import org.springframework.batch.infrastructure.item.database.JdbcBatchItemWriter;
@@ -20,11 +20,11 @@ import java.util.List;
 public class FinDataWriterConfig {
 
     @Bean
-    public ItemWriter<FinData> finDataJpaBulkWriter(
-            FinDataRepository finDataRepository) {
+    public ItemWriter<FinData> finDataJpaSingleWriter(
+            FinDataJpaRepository finDataJpaRepository) {
 
         return chunk -> {
-            finDataRepository.saveAll(chunk.getItems());
+            finDataJpaRepository.saveAll(chunk.getItems());
         };
     }
 
@@ -36,60 +36,8 @@ public class FinDataWriterConfig {
                 .build();
     }
 
-
     @Bean
-    public JdbcBatchItemWriter<FinData> finDataWriter(DataSource dataSource) {
-
-        return new JdbcBatchItemWriterBuilder<FinData>()
-                .dataSource(dataSource)
-                .sql("""
-                    INSERT INTO fin_data (
-                        SENSOR_ID,
-                        REGION_ID,
-                        VISITOR_ID,
-                        DEVICE_ID,
-                        DEVICE_TYPE,
-                        POPULATION_TYPE,
-                        GLOBAL_ID,
-                        FIRST_TIME_SEEN,
-                        LAST_TIME_SEEN,
-                        RSSI,
-                        N_EVENTS,
-                        MANUFACTURER,
-                        MANUFACTURER_ROUTER,
-                        MANUFACTURER_GLOBAL,
-                        EXCLUDED,
-                        SSID,
-                        FRAME_CONTROL_HEX,
-                        LENGTH
-                    )
-                    VALUES (
-                        :sensorId,
-                        :regionId,
-                        :visitorId,
-                        :deviceId,
-                        :deviceType,
-                        :populationType,
-                        :globalId,
-                        :firstTimeSeen,
-                        :lastTimeSeen,
-                        :rssi,
-                        :nEvents,
-                        :manufacturer,
-                        :manufacturerRouter,
-                        :manufacturerGlobal,
-                        :excluded,
-                        :ssid,
-                        :frameControlHex,
-                        :length
-                    )
-                    """)
-                .beanMapped()
-                .build();
-    }
-
-    @Bean
-    public ItemWriter<FinData> finDataBulkWriter(JdbcTemplate jdbcTemplate) {
+    public ItemWriter<FinData> finDataJdbcBulkWriter(JdbcTemplate jdbcTemplate) {
 
         return chunk -> {
 

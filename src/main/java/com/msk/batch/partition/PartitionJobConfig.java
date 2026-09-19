@@ -1,7 +1,7 @@
 package com.msk.batch.partition;
 
 import com.msk.batch.model.FinData;
-import com.msk.batch.reader.FinDataPartitionReader;
+import com.msk.batch.PerformanceLoggingListener;
 import org.springframework.batch.core.partition.PartitionHandler;
 import org.springframework.batch.core.partition.support.TaskExecutorPartitionHandler;
 import org.springframework.batch.core.repository.JobRepository;
@@ -9,7 +9,6 @@ import org.springframework.batch.core.step.Step;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.infrastructure.item.database.JpaItemWriter;
 import org.springframework.batch.infrastructure.item.file.FlatFileItemReader;
-import org.springframework.batch.infrastructure.item.file.MultiResourceItemReader;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,14 +21,16 @@ public class PartitionJobConfig {
 
     @Bean
     @Qualifier
-    public Step partitionStep(
+    public Step jpaBulkInsertPartitionStep(
             JobRepository jobRepository,
             FilePartitioner filePartitioner,
-            PartitionHandler partitionHandler) {
+            PartitionHandler partitionHandler,
+            PerformanceLoggingListener performanceLoggingListener) {
 
-        return new StepBuilder("partitionStep", jobRepository)
+        return new StepBuilder("jpaBulkInsertPartitionStep", jobRepository)
                 .partitioner("workerStep", filePartitioner)
                 .partitionHandler(partitionHandler)
+                .listener(performanceLoggingListener)
                 .build();
     }
 
@@ -64,11 +65,14 @@ public class PartitionJobConfig {
     @Bean
     @Qualifier
     public Step workerStep(JobRepository jobRepository, PlatformTransactionManager transactionManager,
-                            @Qualifier("partitionFinDataItemReader") FlatFileItemReader<FinData> itemReader, JpaItemWriter<FinData> finDataJpaWriter) {
-        return new StepBuilder("processStep", jobRepository)
-                .<FinData, FinData>chunk(100_000)
+                            @Qualifier("partitionFinDataItemReader") FlatFileItemReader<FinData> itemReader,
+                            JpaItemWriter<FinData> finDataJpaWriter,
+                            PerformanceLoggingListener performanceLoggingListener) {
+        return new StepBuilder("workerStep", jobRepository)
+                .<FinData, FinData>chunk(10_000)
                 .reader(itemReader)
                 .writer(finDataJpaWriter)
+                .listener(performanceLoggingListener)
                 .transactionManager(transactionManager)
                 .build();
     }

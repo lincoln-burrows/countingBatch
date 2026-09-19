@@ -1,4 +1,5 @@
 CREATE TABLE IF NOT EXISTS fin_data (
+    seq_num               BIGINT AUTO_INCREMENT PRIMARY KEY,
     sensor_id             VARCHAR(100) NOT NULL,
     region_id             INT          NOT NULL,
     visitor_id            VARCHAR(100) NOT NULL,
@@ -17,19 +18,11 @@ CREATE TABLE IF NOT EXISTS fin_data (
     ssid                  VARCHAR(255),
     frame_control_hex     VARCHAR(50),
     length                INT
---     , CONSTRAINT pk_fin_data
---         PRIMARY KEY (
---             SENSOR_ID,
---             REGION_ID,
---             VISITOR_ID,
---             FIRST_TIME_SEEN
---         )
-);
+    );
 
 CREATE TABLE IF NOT EXISTS analytics (
+    seq_num               BIGINT AUTO_INCREMENT PRIMARY KEY,
     sensor_id VARCHAR(255) NOT NULL,
     timestamp TIMESTAMP NOT NULL,
-    visitors BIGINT NOT NULL,
-
-    PRIMARY KEY (sensor_id, timestamp)
+    visitors BIGINT NOT NULL
 );

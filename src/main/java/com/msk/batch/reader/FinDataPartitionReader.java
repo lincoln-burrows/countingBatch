@@ -22,7 +22,7 @@ public class FinDataPartitionReader {
             @Value("#{stepExecutionContext['filePath']}") String filePath) {
 
         return new FlatFileItemReaderBuilder<FinData>()
-                .name("flatFileReader")
+                .name("partitionFinDataItemReader")
                 .resource(new FileSystemResource(filePath))
                 .linesToSkip(1)
                 .delimited()
